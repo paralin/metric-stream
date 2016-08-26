@@ -123,9 +123,6 @@ export const MemberResolvers = {
   CustomHttpPattern: {
   },
   MSClientMessage: {
-    client_identify(msclientmessage) {
-      return msclientmessage.client_identify;
-    },
     metric_subscribe(msclientmessage) {
       return msclientmessage.metric_subscribe;
     },
@@ -134,19 +131,12 @@ export const MemberResolvers = {
     },
   },
   MSServerMessage: {
-    identify_result(msservermessage) {
-      return msservermessage.identify_result;
-    },
     subscribe_result(msservermessage) {
       return msservermessage.subscribe_result;
     },
     unsubscribe_result(msservermessage) {
       return msservermessage.unsubscribe_result;
     },
-  },
-  MSIdentify: {
-  },
-  MSIdentifyResult: {
   },
   MSSubscribe: {
     context(mssubscribe) {

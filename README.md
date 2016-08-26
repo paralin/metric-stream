@@ -6,7 +6,7 @@ Components
 System components:
 
   - RethinkTS is the upstream time-series database
-  - Websockets to transfer data in realtime
+  - Websockets to transfer data in realtime (although this is not in this lib)
   - ProtobufJS to serialize queries
   - Clients can subscribe to metric streams
   - Server must be responsible for batching / aggregating together queries

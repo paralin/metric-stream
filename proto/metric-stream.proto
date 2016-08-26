@@ -8,27 +8,13 @@ import "github.com/fuserobotics/rethinkts/metric/metric-service.proto";
 
 // Wrapper for a message from client
 message MSClientMessage {
-  MSIdentify client_identify = 1;
   MSSubscribe metric_subscribe = 2;
   MSUnsubscribe metric_unsubscribe = 3;
 }
 
 message MSServerMessage {
-  MSIdentifyResult identify_result = 1;
   MSSubscribeResult subscribe_result = 2;
   MSUnsubscribeResult unsubscribe_result = 3;
-}
-
-// Identify to the server
-message MSIdentify {
-  // Authorization passed to server.
-  string authorization = 1;
-}
-
-// Identify result
-message MSIdentifyResult {
-  // Success?
-  bool success = 1;
 }
 
 // Request to subscribe to metric

@@ -617,12 +617,6 @@ export const definitions = {
                     "fields": [
                         {
                             "rule": "optional",
-                            "type": "MSIdentify",
-                            "name": "client_identify",
-                            "id": 1
-                        },
-                        {
-                            "rule": "optional",
                             "type": "MSSubscribe",
                             "name": "metric_subscribe",
                             "id": 2
@@ -640,12 +634,6 @@ export const definitions = {
                     "fields": [
                         {
                             "rule": "optional",
-                            "type": "MSIdentifyResult",
-                            "name": "identify_result",
-                            "id": 1
-                        },
-                        {
-                            "rule": "optional",
                             "type": "MSSubscribeResult",
                             "name": "subscribe_result",
                             "id": 2
@@ -655,28 +643,6 @@ export const definitions = {
                             "type": "MSUnsubscribeResult",
                             "name": "unsubscribe_result",
                             "id": 3
-                        }
-                    ]
-                },
-                {
-                    "name": "MSIdentify",
-                    "fields": [
-                        {
-                            "rule": "optional",
-                            "type": "string",
-                            "name": "authorization",
-                            "id": 1
-                        }
-                    ]
-                },
-                {
-                    "name": "MSIdentifyResult",
-                    "fields": [
-                        {
-                            "rule": "optional",
-                            "type": "bool",
-                            "name": "success",
-                            "id": 1
                         }
                     ]
                 },

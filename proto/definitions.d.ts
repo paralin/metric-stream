@@ -139,23 +139,13 @@ declare interface ICustomHttpPattern {
 }
 
 declare interface IMSClientMessage {
-  client_identify?: IMSIdentify;
   metric_subscribe?: IMSSubscribe;
   metric_unsubscribe?: IMSUnsubscribe;
 }
 
 declare interface IMSServerMessage {
-  identify_result?: IMSIdentifyResult;
   subscribe_result?: IMSSubscribeResult;
   unsubscribe_result?: IMSUnsubscribeResult;
-}
-
-declare interface IMSIdentify {
-  authorization?: string;
-}
-
-declare interface IMSIdentifyResult {
-  success?: boolean;
 }
 
 declare interface IMSSubscribe {
