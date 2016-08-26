@@ -9,7 +9,7 @@ export class MetricStreamServer {
     // 
   }
 
-  public handleMessage(clientIdentifier: string, message: MSClientMessage) {
+  public handleMessage(clientIdentifier: string, message: IMSClientMessage) {
     //
   }
 }
