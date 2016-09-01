@@ -1,1 +1,1 @@
-export * from './metric-stream-server.ts';
+export * from './metric-stream-server';
