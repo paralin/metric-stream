@@ -1,5 +1,5 @@
 export class MetricStreamClient {
-  constructor(private send: (message: IMSClientMessage)) {
+  constructor(private send: (message: IMSClientMessage) => void) {
   }
 
   public handleMessage(message: IMSServerMessage) {
