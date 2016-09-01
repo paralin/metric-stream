@@ -1,6 +1,6 @@
 {
   "name": "@fusebot/metric-stream",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "UNLICENSED",
   "dependencies": {
     "grpc": "^1.0.0",
