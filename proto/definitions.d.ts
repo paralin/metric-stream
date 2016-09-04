@@ -158,6 +158,7 @@ declare interface IMSSubscribeResult {
   error?: MSSubscribeResultType;
   error_details?: string;
   subscription_id?: string;
+  alias_subscription_id?: string;
 }
 
 declare const enum MSSubscribeResultType {

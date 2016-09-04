@@ -689,6 +689,12 @@ export const definitions = {
                             "type": "string",
                             "name": "subscription_id",
                             "id": 3
+                        },
+                        {
+                            "rule": "optional",
+                            "type": "string",
+                            "name": "alias_subscription_id",
+                            "id": 4
                         }
                     ],
                     "enums": [
