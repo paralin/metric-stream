@@ -1,6 +1,8 @@
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
+import * as _ from 'lodash';
+
 export interface IMetricSubscription {
   id: string;
   metric: string;
@@ -12,14 +14,27 @@ export interface IMetricSubscription {
   data?: IMetricSubscriptionData;
 }
 
+export interface IMetricDatapointReplaced {
+  old_datapoint: IMetricDatapoint;
+  new_datapoint: IMetricDatapoint;
+}
+
 export interface IMetricSubscriptionData {
   // Subscription IDs of data
   subscriptionIds: string[];
+
+  // Sorted array of datapoints
   datapoints: IMetricDatapoint[];
+  // Timestamps for each datapoint, sorted, for faster queries
+  timestamps: number[];
+
   datapointAdded: Subject<IMetricDatapoint>;
   datapointRemoved: Subject<IMetricDatapoint>;
+  datapointReplaced: Subject<IMetricDatapointReplaced>;
+
   initialSetComplete: BehaviorSubject<boolean>;
   disposed: BehaviorSubject<boolean>;
+  series: BehaviorSubject<IMetricSeries>;
 }
 
 export class MetricStreamClient {
@@ -35,6 +50,9 @@ export class MetricStreamClient {
     }
     if (message.unsubscribe_result) {
       this.handleUnsubscribeResult(message.unsubscribe_result);
+    }
+    if (message.datapoint) {
+      this.handleDatapoint(message.datapoint);
     }
   }
 
@@ -135,9 +153,80 @@ export class MetricStreamClient {
       datapoints: [],
       datapointAdded: new Subject<IMetricDatapoint>(),
       datapointRemoved: new Subject<IMetricDatapoint>(),
+      datapointReplaced: new Subject<IMetricDatapointReplaced>(),
       initialSetComplete: new BehaviorSubject<boolean>(false),
       disposed: new BehaviorSubject<boolean>(false),
+      series: new BehaviorSubject<IMetricSeries>(null),
     };
+  }
+
+  private handleDatapoint(message: IMSDatapoint) {
+    let subId = message.subscription_id;
+    let sub = this.subscriptions[subId];
+    if (!sub) {
+      this.sendUnsubscribe(subId);
+      return;
+    }
+    if (!sub.data) {
+      // This is an error condition
+      return;
+    }
+    let data = message.data;
+    if (data.series) {
+      sub.data.series.next(data.series);
+      return;
+    }
+    if (!sub.data.initialSetComplete.value && !data.initial_set) {
+      sub.data.initialSetComplete.next(true);
+    }
+    switch (data.response_type) {
+      case ListDatapointResponseType.LIST_DATAPOINT_DEL:
+        this.removeDatapoint(sub.data, data.datapoint.timestamp);
+        break;
+      case ListDatapointResponseType.LIST_DATAPOINT_REPLACE:
+        if (this.removeDatapoint(sub.data, data.datapoint.timestamp, data.datapoint)) {
+          // If we don't remove one, just add it
+          this.insertDatapoint(sub.data, data.datapoint);
+        }
+        break;
+      case ListDatapointResponseType.LIST_DATAPOINT_ADD:
+        this.insertDatapoint(sub.data, data.datapoint);
+        break;
+      // Unhandled
+      default:
+        break;
+    }
+  }
+
+  // Sorted insert of datapoint
+  private insertDatapoint(subData: IMetricSubscriptionData, datapoint: IMetricDatapoint) {
+    let idx = _.sortedIndex(subData.timestamps, datapoint.timestamp);
+    subData.timestamps.splice(idx, 0, datapoint.timestamp);
+    subData.datapoints.splice(idx, 0, datapoint);
+  }
+
+  // Remove a datapoint
+  private removeDatapoint(subData: IMetricSubscriptionData,
+                          timestamp: number,
+                          replaceWith: IMetricDatapoint = null): boolean {
+    let idx = _.sortedIndexOf(subData.timestamps, timestamp);
+    if (idx < 0) {
+      return false;
+    }
+    let old = subData.datapoints[idx];
+    if (replaceWith) {
+      subData.timestamps[idx] = replaceWith.timestamp;
+      subData.datapoints[idx] = replaceWith;
+      subData.datapointReplaced.next({
+        old_datapoint: old,
+        new_datapoint: replaceWith,
+      });
+      return true;
+    }
+    subData.timestamps.splice(idx, 1);
+    subData.datapoints.splice(idx, 1);
+    subData.datapointRemoved.next(old);
+    return true;
   }
 
   private handleSubscribeResult(message: IMSSubscribeResult) {

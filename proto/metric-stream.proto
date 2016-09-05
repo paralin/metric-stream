@@ -15,6 +15,7 @@ message MSClientMessage {
 message MSServerMessage {
   MSSubscribeResult subscribe_result = 2;
   MSUnsubscribeResult unsubscribe_result = 3;
+  MSDatapoint datapoint = 4;
 }
 
 // Request to subscribe to metric
@@ -22,6 +23,11 @@ message MSSubscribe {
   metric.RequestContext context = 1;
   metric.MetricDatapointQuery query = 2;
   string subscription_id = 3;
+}
+
+message MSDatapoint {
+  string subscription_id = 1;
+  metric.ListDatapointResponse data = 2;
 }
 
 message MSSubscribeResult {
@@ -37,6 +43,8 @@ message MSSubscribeResult {
     SUBSCRIBE_BAD_ID = 1;
     // Error talking to RethinkTS
     SUBSCRIBE_GRPC_ERR = 2;
+    // Bad query
+    SUBSCRIBE_BAD_QUERY = 3;
   }
 }
 

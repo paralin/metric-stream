@@ -146,12 +146,18 @@ declare interface IMSClientMessage {
 declare interface IMSServerMessage {
   subscribe_result?: IMSSubscribeResult;
   unsubscribe_result?: IMSUnsubscribeResult;
+  datapoint?: IMSDatapoint;
 }
 
 declare interface IMSSubscribe {
   context?: IRequestContext;
   query?: IMetricDatapointQuery;
   subscription_id?: string;
+}
+
+declare interface IMSDatapoint {
+  subscription_id?: string;
+  data?: IListDatapointResponse;
 }
 
 declare interface IMSSubscribeResult {
@@ -165,6 +171,7 @@ declare const enum MSSubscribeResultType {
   SUBSCRIBE_OK = 0,
   SUBSCRIBE_BAD_ID = 1,
   SUBSCRIBE_GRPC_ERR = 2,
+  SUBSCRIBE_BAD_QUERY = 3,
 }
 
 declare interface IMSUnsubscribe {

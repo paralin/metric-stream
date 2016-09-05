@@ -6,5 +6,6 @@
     "protobufjs": "registry:dt/protobufjs#5.0.1+20160728152620"
   },
   "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
   }
 }

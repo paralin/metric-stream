@@ -137,6 +137,9 @@ export const MemberResolvers = {
     unsubscribe_result(msservermessage) {
       return msservermessage.unsubscribe_result;
     },
+    datapoint(msservermessage) {
+      return msservermessage.datapoint;
+    },
   },
   MSSubscribe: {
     context(mssubscribe) {
@@ -144,6 +147,11 @@ export const MemberResolvers = {
     },
     query(mssubscribe) {
       return mssubscribe.query;
+    },
+  },
+  MSDatapoint: {
+    data(msdatapoint) {
+      return msdatapoint.data;
     },
   },
   MSSubscribeResult: {

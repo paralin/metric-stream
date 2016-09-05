@@ -643,6 +643,12 @@ export const definitions = {
                             "type": "MSUnsubscribeResult",
                             "name": "unsubscribe_result",
                             "id": 3
+                        },
+                        {
+                            "rule": "optional",
+                            "type": "MSDatapoint",
+                            "name": "datapoint",
+                            "id": 4
                         }
                     ]
                 },
@@ -666,6 +672,23 @@ export const definitions = {
                             "type": "string",
                             "name": "subscription_id",
                             "id": 3
+                        }
+                    ]
+                },
+                {
+                    "name": "MSDatapoint",
+                    "fields": [
+                        {
+                            "rule": "optional",
+                            "type": "string",
+                            "name": "subscription_id",
+                            "id": 1
+                        },
+                        {
+                            "rule": "optional",
+                            "type": "metric.ListDatapointResponse",
+                            "name": "data",
+                            "id": 2
                         }
                     ]
                 },
@@ -712,6 +735,10 @@ export const definitions = {
                                 {
                                     "name": "SUBSCRIBE_GRPC_ERR",
                                     "id": 2
+                                },
+                                {
+                                    "name": "SUBSCRIBE_BAD_QUERY",
+                                    "id": 3
                                 }
                             ]
                         }
