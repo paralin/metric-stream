@@ -151,6 +151,7 @@ export class MetricStreamClient {
     sub.data = {
       subscriptionIds: [sub.id],
       datapoints: [],
+      timestamps: [],
       datapointAdded: new Subject<IMetricDatapoint>(),
       datapointRemoved: new Subject<IMetricDatapoint>(),
       datapointReplaced: new Subject<IMetricDatapointReplaced>(),
