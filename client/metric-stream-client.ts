@@ -68,6 +68,7 @@ export class MetricStreamClient {
       data: null,
     };
     this.subscriptions[sub.id] = sub;
+    this.sendSubscribe(sub);
     return sub;
   }
 
