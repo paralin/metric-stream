@@ -184,16 +184,16 @@ export class MetricStreamClient {
       sub.data.initialSetComplete.next(true);
     }
     switch (data.response_type) {
-      case ListDatapointResponseType.LIST_DATAPOINT_DEL:
+      case 2: // ListDatapointResponseType.LIST_DATAPOINT_DEL:
         this.removeDatapoint(sub.data, data.datapoint.timestamp);
         break;
-      case ListDatapointResponseType.LIST_DATAPOINT_REPLACE:
+      case 3: // ListDatapointResponseType.LIST_DATAPOINT_REPLACE:
         if (this.removeDatapoint(sub.data, data.datapoint.timestamp, data.datapoint)) {
           // If we don't remove one, just add it
           this.insertDatapoint(sub.data, data.datapoint);
         }
         break;
-      case ListDatapointResponseType.LIST_DATAPOINT_ADD:
+      case 1: // ListDatapointResponseType.LIST_DATAPOINT_ADD:
         this.insertDatapoint(sub.data, data.datapoint);
         break;
       // Unhandled
@@ -243,19 +243,19 @@ export class MetricStreamClient {
       this.sendUnsubscribe(subId);
       return;
     }
-    switch (message.error) {
-      case 0:
-        break;
-      // Bad ID
-      case 1:
-        this.clearSubscription(subId, 'Bad ID, try again.');
-        return;
-      case 2:
-        this.clearSubscription(subId, 'Error talking to DB, try again.');
-        return;
-      default:
-        this.clearSubscription(subId, message.error_details);
-        return;
+    if (message.error) {
+      switch (message.error) {
+        // Bad ID
+        case 1:
+          this.clearSubscription(subId, 'Bad ID, try again.');
+          return;
+        case 2:
+          this.clearSubscription(subId, 'Error talking to DB, try again.');
+          return;
+        default:
+          this.clearSubscription(subId, message.error_details);
+          return;
+      }
     }
     if (message.alias_subscription_id && message.alias_subscription_id.length) {
       let aliasSub = this.subscriptions[message.alias_subscription_id];
