@@ -1,11 +1,4 @@
-import { GRPCMetricServiceProto } from './proto/metric.grpc';
-
-import * as grpc from 'grpc';
 import * as _ from 'lodash';
-
-export interface IMetricServerConfig {
-  metricServiceEndpoint: string;
-}
 
 // A container for the RPC query
 class MetricStreamQuery {
@@ -239,13 +232,9 @@ class MetricStreamClient {
 
 export class MetricStreamServer {
   private clients: { [identifier: string]: MetricStreamClient };
-  private metricService: any;
 
-  constructor(private config: IMetricServerConfig) {
+  constructor(private metricService: any) {
     this.clients = {};
-    this.metricService = new GRPCMetricServiceProto(
-      config.metricServiceEndpoint,
-      grpc.credentials.createInsecure());
   }
 
   public addClient(identifier: string, send: (message: IMSServerMessage) => void) {
