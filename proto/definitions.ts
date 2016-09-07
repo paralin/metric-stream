@@ -389,6 +389,10 @@ export const definitions = {
                                 {
                                     "name": "LIST_DATAPOINT_REPLACE",
                                     "id": 3
+                                },
+                                {
+                                    "name": "LIST_DATAPOINT_INITIAL_SET_COMPLETE",
+                                    "id": 4
                                 }
                             ]
                         }

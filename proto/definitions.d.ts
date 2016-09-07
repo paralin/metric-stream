@@ -100,6 +100,7 @@ declare const enum ListDatapointResponseType {
   LIST_DATAPOINT_ADD = 1,
   LIST_DATAPOINT_DEL = 2,
   LIST_DATAPOINT_REPLACE = 3,
+  LIST_DATAPOINT_INITIAL_SET_COMPLETE = 4,
 }
 
 declare interface IListMetricResponse {
