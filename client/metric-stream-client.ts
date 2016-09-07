@@ -7,11 +7,9 @@ export interface IMetricSubscription {
   id: string;
   metric: string;
   query: IMetricDatapointQuery;
-  // When server acknowledges query and data is ready to subscribe
-  initialized: Subject<IMetricSubscriptionData>;
   // When subscription is ended, with reason
   unsubscribe: Subject<string>;
-  data?: IMetricSubscriptionData;
+  data: BehaviorSubject<IMetricSubscriptionData>;
 }
 
 export interface IMetricDatapointReplaced {
@@ -65,8 +63,7 @@ export class MetricStreamClient {
       query: query,
       metric: metricName,
       unsubscribe: new Subject<string>(),
-      initialized: new Subject<IMetricSubscriptionData>(),
-      data: null,
+      data: new BehaviorSubject<IMetricSubscriptionData>(null),
     };
     this.subscriptions[sub.id] = sub;
     this.sendSubscribe(sub);
@@ -108,22 +105,22 @@ export class MetricStreamClient {
     if (reason) {
       sub.unsubscribe.next(reason);
     }
-    if (sub.data) {
+    if (sub.data.value) {
       // Remove the subscription ID from data
-      if (sub.data.subscriptionIds.length > 1) {
-        let subIdIdx = sub.data.subscriptionIds.indexOf(subId);
+      if (sub.data.value.subscriptionIds.length > 1) {
+        let subIdIdx = sub.data.value.subscriptionIds.indexOf(subId);
         if (subIdIdx > -1) {
-          sub.data.subscriptionIds.splice(subIdIdx, 1);
+          sub.data.value.subscriptionIds.splice(subIdIdx, 1);
         }
       } else {
-        sub.data.subscriptionIds = [];
+        sub.data.value.subscriptionIds = [];
       }
       // Dispose the data if needed
-      if (!sub.data.subscriptionIds.length) {
-        sub.data.disposed.next(true);
-        sub.data.datapoints = null;
+      if (!sub.data.value.subscriptionIds.length) {
+        sub.data.value.disposed.next(true);
+        sub.data.value.datapoints = null;
       }
-      sub.data = null;
+      sub.data.next(null);
     }
     return sub;
   }
@@ -151,7 +148,10 @@ export class MetricStreamClient {
   }
 
   private createDataContainer(sub: IMetricSubscription) {
-    sub.data = {
+    if (sub.data.value) {
+      return;
+    }
+    sub.data.next({
       subscriptionIds: [sub.id],
       datapoints: [],
       timestamps: [],
@@ -161,40 +161,39 @@ export class MetricStreamClient {
       initialSetComplete: new BehaviorSubject<boolean>(false),
       disposed: new BehaviorSubject<boolean>(false),
       series: new BehaviorSubject<IMetricSeries>(null),
-    };
+    });
   }
 
   private handleDatapoint(message: IMSDatapoint) {
     let subId = message.subscription_id;
     let sub = this.subscriptions[subId];
     if (!sub) {
-      console.log('received subscription for unknown sub id ' + subId);
       this.sendUnsubscribe(subId);
       return;
     }
-    if (!sub.data) {
+    if (!sub.data.value) {
       // This is an error condition
       return;
     }
     let data = message.data;
     switch (data.response_type) {
       case 0: // ListDatapointResponseType.LIST_DATAPOINT_SERIES_DETAILS
-        sub.data.series.next(data.series);
+        sub.data.value.series.next(data.series);
         break;
       case 2: // ListDatapointResponseType.LIST_DATAPOINT_DEL:
-        this.removeDatapoint(sub.data, data.datapoint.timestamp);
+        this.removeDatapoint(sub.data.value, data.datapoint.timestamp);
         break;
       case 3: // ListDatapointResponseType.LIST_DATAPOINT_REPLACE:
-        if (this.removeDatapoint(sub.data, data.datapoint.timestamp, data.datapoint)) {
+        if (this.removeDatapoint(sub.data.value, data.datapoint.timestamp, data.datapoint)) {
           // If we don't remove one, just add it
-          this.insertDatapoint(sub.data, data.datapoint);
+          this.insertDatapoint(sub.data.value, data.datapoint);
         }
         break;
       case 1: // ListDatapointResponseType.LIST_DATAPOINT_ADD:
-        this.insertDatapoint(sub.data, data.datapoint);
+        this.insertDatapoint(sub.data.value, data.datapoint);
         break;
       case 4: // ListDatapointResponseType.LIST_DATAPOINT_INITIAL_SET_COMPLETE:
-        sub.data.initialSetComplete.next(true);
+        sub.data.value.initialSetComplete.next(true);
         break;
       default:
         break;
@@ -239,7 +238,6 @@ export class MetricStreamClient {
       if (message.error) {
         return;
       }
-      console.log('got subscribe result for unknown sub ' + subId);
       this.sendUnsubscribe(subId);
       return;
     }
@@ -261,24 +259,20 @@ export class MetricStreamClient {
       let aliasSub = this.subscriptions[message.alias_subscription_id];
       if (!aliasSub) {
         // Respin the subscription after unsubscribing both in order.
-        console.log('respinning ' + message.subscription_id);
         this.sendUnsubscribe(message.alias_subscription_id);
         this.sendUnsubscribe(message.subscription_id);
         this.sendSubscribe(sub);
         return;
       }
-      if (!aliasSub.data) {
+      if (!aliasSub.data.value) {
         this.createDataContainer(aliasSub);
-        aliasSub.initialized.next(aliasSub.data);
       }
-      aliasSub.data.subscriptionIds.push(message.subscription_id);
-      sub.data = aliasSub.data;
-      sub.initialized.next(sub.data);
+      aliasSub.data.value.subscriptionIds.push(message.subscription_id);
+      sub.data.next(aliasSub.data.value);
       return;
     }
     // Init a empty data container
     this.createDataContainer(sub);
-    sub.initialized.next(sub.data);
   }
 
   private handleUnsubscribeResult(message: IMSUnsubscribeResult) {
