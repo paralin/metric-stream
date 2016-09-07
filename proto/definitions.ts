@@ -461,7 +461,9 @@ export const definitions = {
                     "rpc": {
                         "RecordDatapoint": {
                             "request": "RecordDatapointRequest",
+                            "request_stream": false,
                             "response": "RecordDatapointResponse",
+                            "response_stream": false,
                             "options": {
                                 "(google.api.http).post": "/v1/metric/{context.identifier.id}/datapoint",
                                 "(google.api.http).body": "datapoint"
@@ -469,26 +471,34 @@ export const definitions = {
                         },
                         "RecordDatapointStream": {
                             "request": "RecordDatapointRequest",
+                            "request_stream": true,
                             "response": "RecordDatapointResponse",
+                            "response_stream": false,
                             "options": {}
                         },
                         "ListDatapoint": {
                             "request": "ListDatapointRequest",
+                            "request_stream": false,
                             "response": "ListDatapointResponse",
+                            "response_stream": true,
                             "options": {
                                 "(google.api.http).get": "/v1/metric/{context.identifier.id}/datapoint"
                             }
                         },
                         "ListMetric": {
                             "request": "ListMetricRequest",
+                            "request_stream": false,
                             "response": "ListMetricResponse",
+                            "response_stream": false,
                             "options": {
                                 "(google.api.http).get": "/v1/metric"
                             }
                         },
                         "CreateMetric": {
                             "request": "CreateMetricRequest",
+                            "request_stream": false,
                             "response": "CreateMetricResponse",
+                            "response_stream": false,
                             "options": {
                                 "(google.api.http).post": "/v1/metric",
                                 "(google.api.http).body": "metric"
@@ -496,7 +506,9 @@ export const definitions = {
                         },
                         "GetMetric": {
                             "request": "GetMetricRequest",
+                            "request_stream": false,
                             "response": "GetMetricResponse",
+                            "response_stream": false,
                             "options": {
                                 "(google.api.http).get": "/v1/metric/{context.identifier.id}"
                             }
