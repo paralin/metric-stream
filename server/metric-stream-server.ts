@@ -37,7 +37,7 @@ class MetricStreamQuery {
     }
     this.disposed = true;
     if (this.rpcCall) {
-      this.rpcCall.end();
+      this.rpcCall.cancel();
       this.rpcCall = null;
     }
     for (let sub of this.subscriptions) {
@@ -115,6 +115,7 @@ class MetricStreamSubscription {
     if (this.disposed) {
       return;
     }
+    console.log('disposing call');
     this.disposed = true;
     this.query.unsubscribe(this);
     this.sendUnsubscribe();
@@ -166,6 +167,19 @@ class MetricStreamClient {
       this.send = (message: any) => {
         return;
       };
+    }
+
+    let subs = this.subscriptions;
+    this.subscriptions = {};
+    for (let subId in subs) {
+      if (!subs.hasOwnProperty(subId)) {
+        continue;
+      }
+      let sub = subs[subId];
+      if (!sub) {
+        continue;
+      }
+      sub.dispose();
     }
   }
 
