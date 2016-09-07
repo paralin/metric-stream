@@ -43,6 +43,7 @@ export class MetricStreamClient {
 
   constructor(private send: (message: IMSClientMessage) => void) {
     this.subscriptions = {};
+    this.subIdCounter = 0;
   }
 
   public handleMessage(message: IMSServerMessage) {
