@@ -168,6 +168,7 @@ export class MetricStreamClient {
     let subId = message.subscription_id;
     let sub = this.subscriptions[subId];
     if (!sub) {
+      console.log('received subscription for unknown sub id ' + subId);
       this.sendUnsubscribe(subId);
       return;
     }
@@ -176,14 +177,10 @@ export class MetricStreamClient {
       return;
     }
     let data = message.data;
-    if (data.series) {
-      sub.data.series.next(data.series);
-      return;
-    }
-    if (!sub.data.initialSetComplete.value && !data.initial_set) {
-      sub.data.initialSetComplete.next(true);
-    }
     switch (data.response_type) {
+      case 0: // ListDatapointResponseType.LIST_DATAPOINT_SERIES_DETAILS
+        sub.data.series.next(data.series);
+        break;
       case 2: // ListDatapointResponseType.LIST_DATAPOINT_DEL:
         this.removeDatapoint(sub.data, data.datapoint.timestamp);
         break;
@@ -196,7 +193,9 @@ export class MetricStreamClient {
       case 1: // ListDatapointResponseType.LIST_DATAPOINT_ADD:
         this.insertDatapoint(sub.data, data.datapoint);
         break;
-      // Unhandled
+      case 4: // ListDatapointResponseType.LIST_DATAPOINT_INITIAL_SET_COMPLETE:
+        sub.data.initialSetComplete.next(true);
+        break;
       default:
         break;
     }
@@ -240,6 +239,7 @@ export class MetricStreamClient {
       if (message.error) {
         return;
       }
+      console.log('got subscribe result for unknown sub ' + subId);
       this.sendUnsubscribe(subId);
       return;
     }
@@ -261,6 +261,7 @@ export class MetricStreamClient {
       let aliasSub = this.subscriptions[message.alias_subscription_id];
       if (!aliasSub) {
         // Respin the subscription after unsubscribing both in order.
+        console.log('respinning ' + message.subscription_id);
         this.sendUnsubscribe(message.alias_subscription_id);
         this.sendUnsubscribe(message.subscription_id);
         this.sendSubscribe(sub);
