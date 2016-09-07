@@ -8,7 +8,8 @@ export interface IMetricSubscription {
   metric: string;
   query: IMetricDatapointQuery;
   // When subscription is ended, with reason
-  unsubscribe: Subject<string>;
+  onUnsubscribe: Subject<string>;
+  unsubscribe: () => void;
   data: BehaviorSubject<IMetricSubscriptionData>;
 }
 
@@ -58,11 +59,19 @@ export class MetricStreamClient {
 
   public subscribe(metricName: string, query: IMetricDatapointQuery): IMetricSubscription {
     let id = (this.subIdCounter++) + '';
+    let unsubscribeCalled = false;
     let sub: IMetricSubscription = {
       id: id,
       query: query,
       metric: metricName,
-      unsubscribe: new Subject<string>(),
+      onUnsubscribe: new Subject<string>(),
+      unsubscribe: () => {
+        if (unsubscribeCalled) {
+          return;
+        }
+        unsubscribeCalled = true;
+        this.clearSubscription(id);
+      },
       data: new BehaviorSubject<IMetricSubscriptionData>(null),
     };
     this.subscriptions[sub.id] = sub;
@@ -103,7 +112,7 @@ export class MetricStreamClient {
     }
     delete this.subscriptions[subId];
     if (reason) {
-      sub.unsubscribe.next(reason);
+      sub.onUnsubscribe.next(reason);
     }
     if (sub.data.value) {
       // Remove the subscription ID from data
