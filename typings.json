@@ -2,7 +2,6 @@
   "globalDependencies": {
     "bytebuffer": "registry:dt/bytebuffer#5.0.0+20160624071349",
     "long": "registry:dt/long#3.0.2+20160602144319",
-    "node": "registry:dt/node#6.0.0+20160621231320",
     "protobufjs": "registry:dt/protobufjs#5.0.1+20160728152620"
   },
   "dependencies": {
