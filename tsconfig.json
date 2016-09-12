@@ -8,9 +8,7 @@
     "sourceMap": true
   },
   "exclude": [
-    "node_modules",
-    "typings/globals",
-    "typings/modules"
+    "node_modules"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,
