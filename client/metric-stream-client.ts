@@ -214,6 +214,7 @@ export class MetricStreamClient {
     let idx = _.sortedIndex(subData.timestamps, datapoint.timestamp);
     subData.timestamps.splice(idx, 0, datapoint.timestamp);
     subData.datapoints.splice(idx, 0, datapoint);
+    subData.datapointAdded.next(datapoint);
   }
 
   // Remove a datapoint
