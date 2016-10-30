@@ -19,7 +19,7 @@
     "@types/lodash": "^4.14.34",
     "@types/node": "^6.0.38",
     "@types/protobufjs": "^5.0.29",
-    "angular2-template-loader": "^0.5.0",
+    "angular2-template-loader": "^0.6.0",
     "awesome-typescript-loader": "^2.2.1",
     "codelyzer": "0.0.28",
     "cz-conventional-changelog": "^1.2.0",
