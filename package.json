@@ -24,7 +24,7 @@
     "codelyzer": "0.0.28",
     "cz-conventional-changelog": "^1.2.0",
     "greenkeeper-postpublish": "^1.0.1",
-    "semantic-release": "^4.3.5",
+    "semantic-release": "^6.3.2",
     "tslint": "^3.14.0",
     "typescript": "~2.0.0"
   },
