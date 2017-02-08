@@ -3,6 +3,8 @@ Metric stream is a way of taking time series data / metrics and serving them to 
 Components
 ==========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/FuseRobotics/metric-stream.svg?token=9e0ec997fcab910eb3c6ea9da6b19e583c0643b5c278db79ba52111ba1b74505)](https://greenkeeper.io/)
+
 System components:
 
   - RethinkTS is the upstream time-series database
