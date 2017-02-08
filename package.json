@@ -17,16 +17,16 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.34",
-    "@types/node": "^6.0.38",
+    "@types/node": "^7.0.5",
     "@types/protobufjs": "^5.0.29",
     "angular2-template-loader": "^0.6.0",
-    "awesome-typescript-loader": "^2.2.1",
-    "codelyzer": "0.0.28",
+    "awesome-typescript-loader": "^3.0.3",
+    "codelyzer": "2.0.0",
     "cz-conventional-changelog": "^1.2.0",
     "greenkeeper-postpublish": "^1.0.1",
     "semantic-release": "^6.3.2",
-    "tslint": "^3.14.0",
-    "typescript": "~2.0.0"
+    "tslint": "^4.4.2",
+    "typescript": "~2.1.5"
   },
   "repository": {
     "type": "git",
